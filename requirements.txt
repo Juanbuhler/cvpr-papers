@@ -1,0 +1,6 @@
+bokeh==2.4.3
+streamlit==1.28.2
+numpy==1.26.2
+pandas==2.2.2
+sentence-transformers==3.0.1
+scikit-learn==1.5.0
