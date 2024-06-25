@@ -29,6 +29,19 @@ def get_models():
     nn_model.fit(sentence_embeddings)
     return sentence_model, nn_model
 
+with st.sidebar.popover("About"):
+    st.title("A visualization of CVPR papers")
+    st.write("Abstracts from all the papers from CVPR 2021 to 2024 were embedded using "
+             "https://huggingface.co/sentence-transformers/all-mpnet-base-v2 .")
+    st.write("K-means clusters were created at different granularity. For each cluster, the set of paper titles "
+             "were passed to GPT-4 to obtain an overarching theme.")
+    st.write("Click on a point to read the corresponding abstract and access the paper's page on the CVPR website.")
+    st.write("Use the search bar to perform natural language search--queries are embedded using the same model and the"
+             "N closest neighbors are highlighted.")
+    st.write("Use the controls on the sidebar to color the points according to cluster or year and to control other "
+             "search ad display attributes as described.")
+    st.markdown("---")
+    st.write("Find me at https://www.linkedin.com/in/juanbuhler/")
 
 df, sentence_embeddings = load_data()
 
