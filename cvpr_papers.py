@@ -37,9 +37,9 @@ with st.sidebar.popover("About"):
              "were passed to GPT-4 to obtain an overarching theme.")
     st.write("Click on a point to read the corresponding abstract and access the paper's page on the CVPR website.")
     st.write("Use the search bar to perform natural language search--queries are embedded using the same model and the"
-             "N closest neighbors are highlighted.")
-    st.write("Use the controls on the sidebar to color the points according to cluster or year and to control other "
-             "search ad display attributes as described.")
+             " N closest neighbors are highlighted.")
+    st.write("Use the controls on the sidebar to color the points according to cluster or year, and to control other "
+             "search and display attributes as described.")
     st.markdown("---")
     st.write("Find me at https://www.linkedin.com/in/juanbuhler/")
 
