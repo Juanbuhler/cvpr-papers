@@ -31,10 +31,10 @@ def get_models():
 
 with st.sidebar.popover("About"):
     st.title("A visualization of CVPR papers")
-    st.write("Abstracts from all the papers from CVPR 2021 to 2024 were embedded using "
+    st.write("Abstracts from all the papers from CVPR 2021 to 2025 were embedded using "
              "https://huggingface.co/sentence-transformers/all-mpnet-base-v2 .")
     st.write("K-means clusters were created at different granularity. For each cluster, the set of paper titles "
-             "were passed to GPT-4 to obtain an overarching theme.")
+             "were passed to a language model to obtain an overarching theme.")
     st.write("Click on a point to read the corresponding abstract and access the paper's page on the CVPR website.")
     st.write("Use the search bar to perform natural language search--queries are embedded using the same model and the"
              " N closest neighbors are highlighted.")
@@ -55,7 +55,7 @@ st.sidebar.write("Then, click on different points on the plot to see what paper 
                  "and go to the CVPR 2024 Open Access paper page")
 st.sidebar.markdown("---")
 color_by_year = st.sidebar.checkbox("Color by year")
-show_year = st.sidebar.selectbox("Show Year", options=["All", "2021", "2022", "2023", "2024"])
+show_year = st.sidebar.selectbox("Show Year", options=["All", "2021", "2022", "2023", "2024", "2025"])
 st.sidebar.markdown("---")
 num_results = st.sidebar.slider("Number of search results to show", min_value=5, max_value=100, step=1)
 
@@ -68,14 +68,14 @@ themes_list = [themes[i] for i in cluster_indices]
 
 # Streamlit app layout
 
-title = "CVPR Papers, 2021-2024"
+title = "CVPR Papers, 2021-2025"
 if show_year != "All":
     title = f"CVPR Papers, {show_year}"
 st.title(title)
 
 palette = spectral
 
-year_to_id = {2021: 0, 2022: 1, 2023: 2, 2024: 4}
+year_to_id = {2021: 0, 2022: 1, 2023: 2, 2024: 4, 2025: 5}
 
 if color_by_year:
     color = [palette[year_to_id[y]] for y in df["Year"]]
