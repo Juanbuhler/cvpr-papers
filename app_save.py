@@ -27,38 +27,42 @@ def load_data():
 
 df, sentence_embeddings = load_data()
 
-num_clusters = st.sidebar.slider("Number of clusters", min_value=10, max_value=100, step=10)
+#num_clusters = st.sidebar.slider("Number of clusters", min_value=20, max_value=100, step=10)
 
-kmeans = KMeans(n_clusters=num_clusters)
-cluster_indices = kmeans.fit_predict(sentence_embeddings)
+for num_clusters in range(100,110,10):
+    kmeans = KMeans(n_clusters=num_clusters)
+    cluster_indices = kmeans.fit_predict(sentence_embeddings)
 
-themes_file = f"cluster_themes_{num_clusters}"
-if os.path.isfile(themes_file):
-    with open(themes_file, 'rb') as f:
-        themes = pickle.load(f)
-else:
-    themes = []
-    for cluster in range(0, num_clusters):
-        cluster_titles = [t for i, t in enumerate(df['Title']) if cluster_indices[i] == cluster]
-        prompt = "Given these paper titles, provide an overarching theme in a short phrase or a few comma-separated terms:\n\n"
-        prompt += "\n".join(cluster_titles)
+    themes_file = f"cluster_themes_{num_clusters}"
+    if True:
+    #if os.path.isfile(themes_file):
+    #    with open(themes_file, 'rb') as f:
+    #        themes = pickle.load(f)
+    #else:
+        themes = []
+        for cluster in range(0, num_clusters):
+            print(cluster)
+            cluster_titles = [t for i, t in enumerate(df['Title']) if cluster_indices[i] == cluster]
+            prompt = "\n".join(cluster_titles)
+            prompt += "\n--\nGiven these paper titles, provide five or so comma-separated terms that describe the topics. The papers are from CVPR, so computer vision, neural networks and machine learning are a given, use more specific terms. Output the comma separated terms and nothing else:\n\n"
 
-        # Call the OpenAI API to generate the theme
-        response = ollama.chat(
-            model="llama3.1",
-            messages=[
-                {"role": "user", "content": prompt},
-            ],
-        )
+            # Call the OpenAI API to generate the theme
+            response = ollama.chat(
+                model="llama3.1:latest",
+                messages=[
+                    {"role": "user", "content": prompt},
+                ],
+            )
 
-        # Extract the theme from the response
-        theme = response['message']['content']
-        themes.append(theme)
+            # Extract the theme from the response
+            print(response)
+            theme = response['message']['content']
+            themes.append(theme)
+        with open(f"cluster_themes_{num_clusters}", 'wb') as f:
+            pickle.dump(themes, f)
+
     with open(f"cluster_themes_{num_clusters}", 'wb') as f:
-        pickle.dump(themes, f)
-
-with open(f"cluster_themes_{num_clusters}", 'wb') as f:
-    pickle.dump((themes, cluster_indices), f)
+        pickle.dump((themes, cluster_indices), f)
 
 themes_list = [themes[i] for i in cluster_indices]
 

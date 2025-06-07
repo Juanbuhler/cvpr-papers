@@ -44,8 +44,7 @@ with st.sidebar.popover("About"):
     st.write("Find me at https://www.linkedin.com/in/juanbuhler/")
 
 df, sentence_embeddings = load_data()
-
-projection_method = st.sidebar.selectbox("Projection Method", ["UMAP", "t-SNE"])
+projection_method = st.sidebar.selectbox("Projection Method", ["t-SNE", "UMAP"])
 point_size = st.sidebar.slider("Point Size", min_value=1, max_value=10, value=3)
 st.sidebar.markdown("---")
 st.sidebar.write("Select the number of clusters into which to split the data. Each cluster will have an overarching"
@@ -57,7 +56,7 @@ st.sidebar.markdown("---")
 color_by_year = st.sidebar.checkbox("Color by year")
 show_year = st.sidebar.selectbox("Show Year", options=["All", "2021", "2022", "2023", "2024", "2025"])
 st.sidebar.markdown("---")
-num_results = st.sidebar.slider("Number of search results to show", min_value=5, max_value=100, step=1)
+num_results = st.sidebar.slider("Number of search results to show", min_value=5, max_value=100, step=1, value=100)
 
 themes_file = f"cluster_themes_{num_clusters}"
 
@@ -65,14 +64,13 @@ with open(themes_file, 'rb') as f:
     themes, cluster_indices = pickle.load(f)
 
 themes_list = [themes[i] for i in cluster_indices]
-
 # Streamlit app layout
 
 title = "CVPR Papers, 2021-2025"
 if show_year != "All":
     title = f"CVPR Papers, {show_year}"
 st.title(title)
-
+theme = st.selectbox("Select a theme. Points corresponding to the theme selected will be rendered bigger on the graph.", options=['--'] + list(set(themes_list)))
 palette = spectral
 
 year_to_id = {2021: 0, 2022: 1, 2023: 2, 2024: 4, 2025: 5}
@@ -83,9 +81,10 @@ else:
     color = [palette[i] for i in cluster_indices]
 
 size = [point_size] * len(color)
+
 alpha = [.7] * len(color)
 
-query = st.text_input("Natural Language Search")
+query = st.text_input("Or a query for Natural Language Search. Results shown as bigger white points. Clear this box to go back to selecting themes.")
 
 indices = []
 if query:
@@ -101,6 +100,10 @@ if query:
             color[i] = "#FFFFFF"
         size[i] = point_size * 3
         alpha[i] = 1
+else:
+    for i, s in enumerate(size):
+        if themes_list[i] == theme:
+            size[i] = s * 3
 
 # Create a ColumnDataSource
 df['Color'] = color
@@ -159,7 +162,7 @@ cols = st.columns(2)
 
 cols[0].bokeh_chart(p, use_container_width=True)
 
-cols[0].markdown("<p>GPT-generated theme:</p>", unsafe_allow_html=True)
+cols[0].markdown("<p>Theme:</p>", unsafe_allow_html=True)
 cols[0].markdown("<h3>Theme</h3>", unsafe_allow_html=True)
 cols[1].markdown("<p id='title'> </p>", unsafe_allow_html=True)
 cols[1].markdown("<p id='abstract'>Click on a point to see the details here.</p>", unsafe_allow_html=True)
